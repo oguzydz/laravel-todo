@@ -19,8 +19,8 @@ return [
     'status' => [
         '1' => 'finished',
         '5' => 'unfinished',
-        'finished' => '1',
-        'unfinished' => '5',
+        'finished' => 'Unfinished',
+        'unfinished' => 'Finished',
     ],
 
     'status_class' => [

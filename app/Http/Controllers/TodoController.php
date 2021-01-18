@@ -51,7 +51,7 @@ class TodoController extends Controller
     public function finished()
     {
         try {
-            $todoDataFinished = $this->todoService->findByStatus(
+            $todoData = $this->todoService->findByStatus(
                 'todo.status.finished'
             );
             $type = 'list';
@@ -85,9 +85,7 @@ class TodoController extends Controller
         $type = 'list';
         $title = 'Unfinished\'s Todos';
 
-        return view('todo')->with(
-            compact('type', 'todoData', 'title')
-        );
+        return view('todo')->with(compact('type', 'todoData', 'title'));
     }
     /**
      * Show detail the todo.
@@ -132,10 +130,12 @@ class TodoController extends Controller
 
     public function store(TodoRequest $todoRequest)
     {
-        $todoData = Todo::create($todoRequest->all() + ['user_id' => Auth::user()->id]);
+        $todoData = Todo::create(
+            $todoRequest->all() + ['user_id' => Auth::user()->id]
+        );
         $title = $todoRequest['title'] . ' is created! 😎';
         $type = 'created';
-    
+
         return view('todo', compact('type', 'todoData', 'title'));
     }
 
@@ -157,6 +157,41 @@ class TodoController extends Controller
             ]);
         }
         return view('todo.edit', compact('todoData'));
+    }
+
+    /**
+     *  Show the form for editing the specified resource.
+     *
+     * @param  \App\Http\Requests\TodoRequest;  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function toggle(int $id)
+    {
+
+        try {
+            $todoData = $this->todoService->findById($id);
+ 
+        } catch (TodoNotFoundException $exception) {
+            return view('errors.404', [
+                'error' => $exception->getMessage(),
+                'code' => $exception->getCode(),
+            ]);
+        }
+
+
+        if ($todoData->status === 'finished') {
+            $todoData->status = 'unfinished';
+        } else {
+            $todoData->status = 'finished';
+        }
+
+        $todoData->updated_at = now()->timestamp;
+        $todoData->save();
+
+        return redirect()
+            ->route('detail', $id)
+            ->with('success', 'Todo updated successfully');
     }
 
     /**
@@ -212,4 +247,6 @@ class TodoController extends Controller
             ->route('todo-list')
             ->with('success', 'Todo deleted successfully');
     }
+
+   
 }

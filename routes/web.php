@@ -5,13 +5,13 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\User\UserController;
+use Illuminate\Http\Request;
+// use Symfony\Component\HttpFoundation\Request;
 
 Auth::routes();
 
-
 Route::get('/', [HomeController::class, 'index'])->name('index');
-
-
 
 Route::prefix('todo')
     ->middleware('auth')
@@ -37,4 +37,15 @@ Route::prefix('todo')
         Route::get('/destroy/{id}', [TodoController::class, 'destroy'])->name(
             'destroy'
         );
+        Route::get('/toggle/{id}', [TodoController::class, 'toggle'])->name(
+            'toggle'
+        );
     });
+
+// we can
+Route::get('/user/{user_id}', [UserController::class, 'index'])->whereNumber(
+    'user_id'
+);
+
+// we can
+Route::get('/user/login', [UserController::class, 'login'])->middleware('api');
