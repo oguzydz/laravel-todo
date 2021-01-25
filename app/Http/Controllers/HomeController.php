@@ -50,6 +50,28 @@ class HomeController extends Controller
             ]);
         }
 
-        return view('index', compact('todoData', 'type', 'noData', 'msg'));
+        $finished = User::find(Auth::user()->id)
+            ->todos()
+            ->where('status', 'finished')
+            ->count();
+        $unfinished = User::find(Auth::user()->id)
+            ->todos()
+            ->where('status', 'unfinished')
+            ->count();
+
+        $allTodo = User::find(Auth::user()->id)
+            ->todos()
+            ->count();
+
+        $analytics = (object) [
+            'finished' => $finished,
+            'unfinished' => $unfinished,
+            'allTodo' => $allTodo,
+        ];
+
+        return view(
+            'index',
+            compact('todoData', 'type', 'noData', 'msg', 'analytics')
+        );
     }
 }

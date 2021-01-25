@@ -19,6 +19,7 @@ class Todo extends Model
         'title',
         'desc',
         'status',
+        'image',
         'updated_at',
         'created_at',
     ];

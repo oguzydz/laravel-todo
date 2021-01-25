@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserController extends Controller
 {
@@ -19,7 +21,8 @@ class UserController extends Controller
     {
         //
         $user = Auth::user();
-        return $user->createToken('react', ['server:update'])->plainTextToken;
+        return $user;
+        // return $user->createToken('react', ['server:update'])->plainTextToken;
     }
 
     /**
@@ -97,6 +100,10 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        return User::all();
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+        
     }
 }

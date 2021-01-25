@@ -1,16 +1,15 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Todo Config
     |--------------------------------------------------------------------------
     */
 
-    'paginate_number' => 10,
+    'paginate_number' => 5,
 
-    'str_limit' => 50,
+    'str_limit' => 300,
 
     'profile_str_limit' => 1,
 
@@ -19,8 +18,8 @@ return [
     'status' => [
         '1' => 'finished',
         '5' => 'unfinished',
-        'finished' => 'Unfinished',
-        'unfinished' => 'Finished',
+        'finished' => 'unfinished',
+        'unfinished' => 'finished',
     ],
 
     'status_class' => [
@@ -30,9 +29,16 @@ return [
     ],
 
     'status_icon' => [
-        '0' => '',
-        '1' => 'images/finished.png',
-        '5' => 'images/unfinished.png',
+        'unfinished' => [
+            'icon' => 'bx bxs-check-square',
+            'text' => 'Done',
+            'color' => 'success',
+        ],
+        'finished' => [
+            'icon' => 'bx bxs-x-square',
+            'text' => 'Unfinished',
+            'color' => 'danger'
+        ]
     ],
 
     'messages' => [
@@ -47,4 +53,7 @@ return [
         '5' => '',
     ],
 
+    'update_message' => [
+        'color' => '#7aff004f'
+    ]
 ];

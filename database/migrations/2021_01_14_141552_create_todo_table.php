@@ -17,6 +17,7 @@ class CreateTodoTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('title', 100);
+            $table->string('image')->nullable();
             $table->text('desc');
             $table->enum('status', ['unfinished', 'finished']);
             $table->timestamp('created_at');

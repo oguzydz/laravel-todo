@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class TodoService
 {
-    public function findById(int $id): object
+    public function findById(int $id)
     {
         $todoData = User::find(Auth::user()->id)
             ->todos()
@@ -34,6 +34,8 @@ class TodoService
         return $todoResult;
     }
 
+
+
     public function create($data)
     {
         Todo::create($data + ['user_id' => Auth::user()->id]);
@@ -45,7 +47,7 @@ class TodoService
 
     public function getTodoList()
     {
-        $todoData = Todo::where('user_id', Auth::user()->id)->get();
+        $todoData = Todo::where('user_id', Auth::user()->id)->simplePaginate(config('todo.paginate_number'));
         return $todoData;
     }
 }

@@ -8,19 +8,29 @@ use App\Exceptions\TodoNotFoundException;
 
 use App\Models\Todo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
+use App\Models\User;
 
 class TodoController extends Controller
 {
-    private $todoService;
     /**
-     * For check alert
+     * It is for todoService
+     *
+     * @var object
+     */
+    private $todoService;
+
+    /**
+     * For auth and todo service
      *
      * @return void
      */
     public function __construct(TodoService $todoService)
     {
         $this->todoService = $todoService;
-        $this->middleware('check.alert');
+        $this->middleware('auth');
     }
 
     /**
@@ -28,19 +38,39 @@ class TodoController extends Controller
      * @param  \App\Services\TodoService  $todoService
      * @return \Illuminate\Http\Response
      */
-    public function list()
+    public function list(Request $request)
     {
         try {
             $todoData = $this->todoService->findByStatus();
             $type = 'list';
             $title = 'Todo\'s';
+
+            $finished = User::find(Auth::user()->id)
+                ->todos()
+                ->where('status', 'finished')
+                ->count();
+            $unfinished = User::find(Auth::user()->id)
+                ->todos()
+                ->where('status', 'unfinished')
+                ->count();
+
+            $allTodo = User::find(Auth::user()->id)
+                ->todos()
+                ->count();
+
+            $analytics = [
+                'finished' => $finished,
+                'unfinished' => $unfinished,
+                'allTodo' => $allTodo,
+            ];
+ 
         } catch (TodoNotFoundException $exception) {
             return view('errors.notfound', [
                 'error' => $exception->getMessage(),
             ]);
         }
 
-        return view('todo')->with(compact('type', 'todoData', 'title'));
+        return view('todo-list')->with(compact('type', 'todoData', 'title', 'analytics'));
     }
 
     /**
@@ -122,17 +152,58 @@ class TodoController extends Controller
     }
 
     /**
+     * Show the form for creating a new todo.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function file_upload(Request $request)
+    {
+        if ($request->file()) {
+            $fileName = time() . '_' . $request->file->getClientOriginalName();
+            $filePath = $request
+                ->file('file')
+                ->storeAs('uploads', $fileName, 'public');
+
+            return $filePath;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Create a new todo.
      *
-     * @param  \App\Http\Requests\TodoRequest;  $request
+     * @param  \App\Http\Requests\TodoRequest;  $todoRequest
      * @return \Illuminate\Http\Response
      */
 
     public function store(TodoRequest $todoRequest)
     {
-        $todoData = Todo::create(
-            $todoRequest->all() + ['user_id' => Auth::user()->id]
-        );
+        try {
+            $fileName =
+                time() .
+                '_' .
+                $todoRequest->file('image')->getClientOriginalName();
+
+            $filePath = $todoRequest
+                ->file('image')
+                ->storeAs('uploads', $fileName, 'public');
+
+            $request = $todoRequest->except(['image']);
+
+            $todoData = Todo::create(
+                $request + [
+                    'user_id' => Auth::user()->id,
+                    'image' => '/uploads/' . $fileName,
+                ]
+            );
+        } catch (TodoNotFoundException $exception) {
+            return view('errors.notfound', [
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
         $title = $todoRequest['title'] . ' is created! 😎';
         $type = 'created';
 
@@ -168,17 +239,14 @@ class TodoController extends Controller
 
     public function toggle(int $id)
     {
-
         try {
             $todoData = $this->todoService->findById($id);
- 
         } catch (TodoNotFoundException $exception) {
             return view('errors.404', [
                 'error' => $exception->getMessage(),
                 'code' => $exception->getCode(),
             ]);
         }
-
 
         if ($todoData->status === 'finished') {
             $todoData->status = 'unfinished';
@@ -189,9 +257,12 @@ class TodoController extends Controller
         $todoData->updated_at = now()->timestamp;
         $todoData->save();
 
+        $res = alert()->warning('Todo updated successfully', 'Success');
+
         return redirect()
-            ->route('detail', $id)
-            ->with('success', 'Todo updated successfully');
+            ->back()
+            // ->route('index')
+            ->with(['success' => 'Todo updated successfully', 'id' => $id]);
     }
 
     /**
@@ -243,10 +314,11 @@ class TodoController extends Controller
 
         Todo::find($id)->delete();
 
+        $res = alert()->warning('Todo destroyed successfully', 'Success');
+
         return redirect()
-            ->route('todo-list')
+            ->back()
+            // ->route('todo-list')
             ->with('success', 'Todo deleted successfully');
     }
-
-   
 }

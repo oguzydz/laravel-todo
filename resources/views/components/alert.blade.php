@@ -1,1 +1,1 @@
-@include('vendor.sweetalert.alert')
+@include('sweet::alert')

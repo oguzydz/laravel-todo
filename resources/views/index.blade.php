@@ -5,6 +5,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
+                <h3>Me</h3>
                 <div class="card overflow-hidden">
                     <div class="bg-soft-primary">
                         <div class="row">
@@ -35,22 +36,54 @@
                         </div>
                     </div>
                 </div>
+
+                <h3>Analytics</h3>
+                <div class="card overflow-hidden">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                          All Todo
+                          <span class="badge bg-primary rounded-pill text-white">{{$analytics->allTodo}}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                          Finished
+                          <span class="badge bg-primary rounded-pill text-white">{{$analytics->finished}}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                          Unfinished
+                          <span class="badge bg-primary rounded-pill text-white">{{$analytics->unfinished}}</span>
+                        </li>
+                      </ul>
+                </div>
             </div>
 
             <div class="col-md-8">
+                <h3>Todo List</h3>
                 <div class="card border">
-                    <div class="card-header">
-                        <h5>Your Todo List</h5>
-                    </div>
                     <div class="card-body">
                         <div class="row">
                             @if ($noData === false)
                                 @if ($type == 'list')
-                                    @foreach ($todoData as $todoDetail)
-                                        <div class="col-xl-4 col-sm-6">
-                                            <x-card :cardData="$todoDetail" class="card" />
-                                        </div>
-                                    @endforeach
+                                    <div class="table-responsive pb-4">
+                                       <table id="tech-companies-1" class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Image</th>
+                                                    <th>Title</th>
+                                                    {{-- <th>Description</th> --}}
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($todoData->items() as $todoDetail)
+                                                    <x-card :cardData="$todoDetail" />
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mt-4 float-right col-12 align-items-end d-flex justify-content-end">
+                                        {{$todoData->links()}}
+                                    </div>
                                 @else
                                     <div class="col-md-12">
                                         <x-cardDetail :cardData="$todoData" />
@@ -63,6 +96,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection

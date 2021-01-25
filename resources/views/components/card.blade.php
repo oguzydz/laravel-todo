@@ -1,25 +1,38 @@
-<div {{ $attributes->merge(['class' => $status]) }}>
-    <div class="card-body">
-        <div class="media">
-            <div class="media-body overflow-hidden">
-                <h5 class="text-truncate font-size-15"><a href="{{ route('detail', $cardData->id) }}" class="text-dark">{{ $cardData->title }} <i class="fas fa-external-link-alt"></i></a></h5>
-                <p class="text-muted mb-4">{!! nl2br(e(Str::limit($cardData->desc, config('todo.str_limit'), $end = '...'))) !!}</p>
-                <a href="{{ route('detail', $cardData->id) }}">
-                    <button type="button" class="btn btn-light btn-sm btn-rounded" data-toggle="modal" data-target=".exampleModal">
-                        <i class= "mdi mdi-more mr-1"></i> Read More
-                    </button>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="px-4 py-3 border-top">
-        <ul class="list-inline mb-0">
-            <li class="list-inline-item mr-3">
-                <span class="badge badge-light">{{ config("todo.status.$cardData->status") }}</span>
-            </li>
-            <li class="list-inline-item mr-3" data-toggle="tooltip" data-placement="top" title="" data-original-title="Due Date">
-                <i class= "bx bx-calendar mr-1"></i> {{ $cardData->created_at }}
-            </li>
-        </ul>
-    </div>
-</div>
+ @if (Session::get('id') === $cardData->id)
+     <tr style="background-color:{{ config('todo.update_message.color') }}">
+     @else
+     <tr>
+ @endif
+
+ @if (Session::get('id') === $cardData->id)
+     <div class="alert alert-success" role="alert">
+         {{ Session::get('success') }}
+     </div>
+ @endif
+
+ <th scope="row">
+     {{ $cardData->id }}
+ </th>
+ <th scope="row">
+     <img src="/storage/{{ $cardData->image }}" width="150" class="rounded shadow-lg" />
+ </th>
+ <td>{!! nl2br(e(Str::limit($cardData->title, config('todo.str_limit'), $end = '...'))) !!}</td>
+ {{-- <td>
+     {!! nl2br(e(Str::limit($cardData->desc, config('todo.str_limit'), $end = '...'))) !!}
+ </td> --}}
+ <td>
+     <a href="{{ route('toggle', ['id' => $cardData->id]) }}"
+         class="btn  btn-{{ config('todo.status_icon.' . $cardData->status . '.color') }} w-md waves-effect waves-light d-inline mr-2">
+         <i class="{{ config('todo.status_icon.' . $cardData->status . '.icon') }}"></i>
+         {{ config('todo.status_icon.' . $cardData->status . '.text') }}
+     </a>
+     <a href="{{ route('destroy', ['id' => $cardData->id]) }}"
+         class="btn  btn-danger w-md waves-effect waves-light d-inline mr-2">
+         <i class='bx bxs-trash'></i>
+     </a>
+     <a href="{{ route('detail', ['id' => $cardData->id]) }}"
+         class="btn  btn-primary w-md waves-effect waves-light d-inline">
+         <i class='bx bx-right-arrow-alt'></i>
+     </a>
+ </td>
+ </tr>

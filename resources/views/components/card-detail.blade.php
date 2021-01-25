@@ -1,8 +1,7 @@
 <div class="card">
     <div class="card-body">
         <div class="media">
-            <img src="{{ asset(config("todo.status_icon.$cardData->status")) }}" alt="" class="avatar-sm mr-4">
-
+            <img src="{{ asset('storage' . $cardData->image) }}" alt="" class="img-thumbnail" width="200">
             <div class="media-body overflow-hidden">
                 <h5 class="text-truncate font-size-15">{{ $cardData->title }}</h5>
             </div>
@@ -60,7 +59,7 @@
                 <a href="{{ route('toggle', $cardData->id) }}">
                     <button type="button" class="btn btn-success btn-rounded waves-effect waves-light mb-2 mr-2"
                         style="background: #224686; border: none;"><i class="mdi mdi-briefcase-edit mr-1"></i>
-                        {{ __('Make ') . config("todo.status.$cardData->status")  }}</button>
+                        {{ __('Make ') . config("todo.status.$cardData->status") }}</button>
                 </a>
             </div>
         </div>

@@ -4,13 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-interface TodoNotFoundInterface
-{
-    public function report();
-    public function render();
-}
 
-class TodoNotFoundException extends ModelNotFoundException implements TodoNotFoundInterface
+
+class TodoNotFoundException extends ModelNotFoundException 
 {
     /**
      * Report the exception.

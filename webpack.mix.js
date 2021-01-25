@@ -1,4 +1,4 @@
-const mix = require('laravel-mix');
+const mix = require("laravel-mix");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,8 +11,10 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css')
+mix.js("resources/js/app.js", "public/js")
+    .sass("resources/sass/app.scss", "public/css")
     .sourceMaps();
 
-    
+mix.js("resources/js/manager.js", "public/js").vue();  
+// mix.js("resources/js/manager.js", "public/js").vue(); 
+// mix.browserSync(process.env.MIX_BROWSERSYNC_PROXY);
